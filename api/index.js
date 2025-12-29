@@ -30,16 +30,86 @@ app.get("/api/healthz", (req, res) => {
  * Home page (HTML form)
  */
 app.get("/", (req, res) => {
-    res.send(`
+  res.send(`
+    <!DOCTYPE html>
     <html>
+      <head>
+        <title>Pastebin Lite</title>
+        <meta charset="utf-8" />
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f6fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+          }
+
+          .container {
+            background: #ffffff;
+            padding: 20px 25px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          }
+
+          h2 {
+            text-align: center;
+            margin-bottom: 15px;
+          }
+
+          textarea,
+          input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+          }
+
+          button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background-color: #4b7bec;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            cursor: pointer;
+          }
+
+          button:hover {
+            background-color: #3867d6;
+          }
+
+          .hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+          }
+        </style>
+      </head>
+
       <body>
-        <h2>Create Paste</h2>
-        <form method="POST" action="/create">
-          <textarea name="content" rows="5" cols="40" required></textarea><br/><br/>
-          <input name="ttl_seconds" type="number" placeholder="TTL seconds"/><br/><br/>
-          <input name="max_views" type="number" placeholder="Max views"/><br/><br/>
-          <button type="submit">Create</button>
-        </form>
+        <div class="container">
+          <h2>Create Paste</h2>
+
+          <form method="POST" action="/create">
+            <textarea name="content" rows="6" placeholder="Enter your text here..." required></textarea>
+
+            <input name="ttl_seconds" type="number" placeholder="TTL (seconds)">
+            <div class="hint">Optional: auto-expire after time</div>
+
+            <input name="max_views" type="number" placeholder="Max views">
+            <div class="hint">Optional: limit number of views</div>
+
+            <button type="submit">Create Paste</button>
+          </form>
+        </div>
       </body>
     </html>
   `);
