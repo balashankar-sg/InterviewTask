@@ -53,6 +53,7 @@ app.get("/", (req, res) => {
       width: 420px;
       border-radius: 8px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      align-items:center;
     }
 
     textarea, input, button {
