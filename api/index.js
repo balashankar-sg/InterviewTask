@@ -47,17 +47,23 @@ app.get("/", (req, res) => {
       margin: 0;
     }
 
-    .box {
-      background: #fff;
-      padding: 20px;
-      width: 420px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      align-items:center;
-    }
+   .box {
+  background: #fff;
+  padding: 20px;
+  width: 420px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+
+
 
     textarea, input, button {
-      width: 80%;
+      width: 90%;
       margin-top: 10px;
       padding: 8px;
       font-size: 14px;
