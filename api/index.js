@@ -31,114 +31,116 @@ app.get("/api/healthz", (req, res) => {
  */
 app.get("/", (req, res) => {
   res.send(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Pastebin Lite</title>
-        <meta charset="utf-8" />
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f6fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-          }
-
-          .container {
-            background: #ffffff;
-            padding: 20px 25px;
-            border-radius: 8px;
-            width: 400px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-          }
-
-          h2 {
-            text-align: center;
-            margin-bottom: 15px;
-          }
-
-          textarea,
-          input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-          }
-
-          button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 15px;
-            background-color: #4b7bec;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 15px;
-            cursor: pointer;
-          }
-
-          button:hover {
-            background-color: #3867d6;
-          }
-
-          .hint {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-          }
-        </style>
-      </head>
-
-      <body>
-        <div class="container">
-          <h2>Create Paste</h2>
-
-          <form method="POST" action="/create">
-            <textarea name="content" rows="6" placeholder="Enter your text here..." required></textarea>
-
-            <input name="ttl_seconds" type="number" placeholder="TTL (seconds)">
-            <div class="hint">Optional: auto-expire after time</div>
-
-            <input name="max_views" type="number" placeholder="Max views">
-            <div class="hint">Optional: limit number of views</div>
-
-            <button type="submit">Create Paste</button>
-          </form>
-        </div>
-      </body>
-    </html>
-  `);
-});
-
-/**
- * Create paste (API)
- */
-app.post("/api/pastes", (req, res) => {
-    const { content, ttl_seconds, max_views } = req.body;
-
-    if (!content || content.trim() === "") {
-        return res.status(400).json({ error: "content is required" });
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pastebin Lite</title>
+  <meta charset="utf-8" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
 
-    const id = nanoid(8);
-    const expiresAt =
-        ttl_seconds ? getNow(req) + Number(ttl_seconds) * 1000 : null;
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 420px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
 
-    pastes.set(id, {
+    textarea, input, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      background: #4b7bec;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #3867d6;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+
+    .success {
+      color: green;
+      margin-top: 10px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Create Paste</h2>
+
+    <textarea id="content" rows="5" placeholder="Enter text"></textarea>
+    <input id="ttl" type="number" placeholder="TTL (seconds)">
+    <input id="views" type="number" placeholder="Max views">
+
+    <button onclick="createPaste()">Create Paste</button>
+
+    <div id="result"></div>
+  </div>
+
+<script>
+async function createPaste() {
+  const result = document.getElementById("result");
+  result.innerHTML = "";
+
+  const content = document.getElementById("content").value;
+  const ttl = document.getElementById("ttl").value;
+  const views = document.getElementById("views").value;
+
+  try {
+    const res = await fetch("/api/pastes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         content,
-        expiresAt,
-        remainingViews: max_views ? Number(max_views) : null,
+        ttl_seconds: ttl ? Number(ttl) : undefined,
+        max_views: views ? Number(views) : undefined
+      })
     });
 
-    res.status(201).json({
-        id,
-        url: `${req.protocol}://${req.get("host")}/p/${id}`,
-    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      result.innerHTML = "<div class='error'>" + data.error + "</div>";
+      return;
+    }
+
+    result.innerHTML =
+      "<div class='success'>Paste created:<br><a href='" +
+      data.url +
+      "' target='_blank'>" +
+      data.url +
+      "</a></div>";
+
+  } catch (err) {
+    result.innerHTML = "<div class='error'>Something went wrong</div>";
+  }
+}
+</script>
+</body>
+</html>
+`);
 });
 
 /**
