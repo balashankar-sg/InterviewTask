@@ -64,9 +64,7 @@ app.get("/", (req, res) => {
 
     textarea, input, button {
       width: 90%;
-      margin-top: 10px;
-      padding: 8px;
-      font-size: 14px;
+
     }
 
     button {
